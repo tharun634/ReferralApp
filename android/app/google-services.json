@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "198815441130",
+    "firebase_url": "https://referral-test-4d6be.firebaseio.com",
+    "project_id": "referral-test-4d6be",
+    "storage_bucket": "referral-test-4d6be.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:198815441130:android:86e2f727e9bc3aac31b793",
+        "android_client_info": {
+          "package_name": "com.testing.referralApp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "198815441130-98khpsiim1nobcu92076h4sdmeptjuvg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.testing.referralApp",
+            "certificate_hash": "9b06bffe34c7aa4dfc874431c56bc1f1496a25af"
+          }
+        },
+        {
+          "client_id": "198815441130-4ke2psd9pkgqj3ejq98qdo3of7uth5l7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyChU4f1aXHwj9Lgg1zPsqPJqGdEVz7r7ZM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "198815441130-4ke2psd9pkgqj3ejq98qdo3of7uth5l7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "198815441130-qsh50825vp9slk0sjg00vj3ijpeqct0l.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.testing.referralApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
