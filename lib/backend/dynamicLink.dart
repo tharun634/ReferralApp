@@ -32,11 +32,11 @@ void handleLinkData(PendingDynamicLinkData data, User user) {
         checkReferralStatus(user.uid).then(
           (value) {
             if (value) {
-              print('You have already used a referral link'); 
-            }   
-            // alert "you cannot use the referral link of your referral"
+              print('You have already used a referral link');
+            }
+            
             else {
-              updateReferral(id);
+              updateReferral(id, user.uid);
               hasUsedReferral(user.uid);
             }
           },

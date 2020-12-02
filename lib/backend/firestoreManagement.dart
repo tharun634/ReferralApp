@@ -7,20 +7,31 @@ void creatingUser(String uid) async {
     {
       'referrals': 0,
       'usedReferral': false,
+      'referredBy': '',
     },
   );
 }
 
-void updateReferral(String uid) async {
+void updateReferral(String uid_1, String uid_2) async {
   DocumentSnapshot refereeDeets =
-      await firestoreInstance.collection("users").doc(uid).get();
+      await firestoreInstance.collection("users").doc(uid_1).get();
 
   int currentReferrals = refereeDeets['referrals'];
   currentReferrals++;
 
-  firestoreInstance.collection("users").doc(uid).update(
+  if (refereeDeets['referredBy'] == uid_2) {
+    // alert "you cannot use the referral link of your referral"
+    return;
+  }
+
+  firestoreInstance.collection("users").doc(uid_1).update(
     {
       'referrals': currentReferrals,
+    },
+  );
+  firestoreInstance.collection("users").doc(uid_2).update(
+    {
+      'referredBy': uid_1,
     },
   );
 }
