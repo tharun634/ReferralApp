@@ -21,7 +21,7 @@ void updateReferral(String uid_1, String uid_2) async {
 
   if (refereeDeets['referredBy'] == uid_2) {
     // alert "you cannot use the referral link of your referral"
-    return;
+    throw "Cannot use referral link of your referral";
   }
 
   firestoreInstance.collection("users").doc(uid_1).update(

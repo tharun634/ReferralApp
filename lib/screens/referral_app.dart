@@ -4,7 +4,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:share/share.dart';
 
+import '../backend/firestoreManagement.dart';
+import '../backend/signIn.dart';
+
 class ReferralApp extends StatefulWidget {
+  final User user;
+
+  ReferralApp(this.user);
+
   @override
   _ReferralAppState createState() => _ReferralAppState();
 }
@@ -12,69 +19,97 @@ class ReferralApp extends StatefulWidget {
 class _ReferralAppState extends State<ReferralApp> {
   User user;
   Uri dynamicLink;
+
   @override
   void initState() {
-    // TODO: implement initState
-    Future.delayed(Duration.zero).then((value) async {
-      user = await signInWithGoogle();
-      fetchLinkData(user);
-    });
-
+    user = widget.user;
     super.initState();
+
+    fetchLinkData(
+      user,
+      (error) => Future.delayed(Duration.zero).then(
+        (_) => showDialog(
+          context: context,
+          child: AlertDialog(
+            title: Text(error),
+            actions: [
+              FlatButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
+
+  bool get hasLink => dynamicLink?.toString()?.isNotEmpty ?? false;
+
+  final textStyle = TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: 24,
+  );
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
+        backgroundColor: theme.scaffoldBackgroundColor,
         title: Text(
           'Referral App',
+          style: TextStyle(
+            color: theme.primaryColor,
+            fontWeight: FontWeight.bold,
+          ),
         ),
+        centerTitle: true,
       ),
-      body: Center(
+      body: Container(
+        width: double.infinity,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            GestureDetector(
-              child: Card(
-                margin: EdgeInsets.all(20),
-                child: Text(dynamicLink.toString().isEmpty
-                    ? 'Please press the button to get your link'
-                    : dynamicLink.toString()),
+            Expanded(
+              child: Center(
+                child: StreamBuilder(
+                  stream: firestoreInstance
+                      .collection('users')
+                      .doc(user.uid)
+                      .snapshots(),
+                  builder: (context, snapshots) {
+                    return Text(
+                      snapshots.hasData
+                          ? snapshots.data['referrals'].toString()
+                          : '-',
+                      style: TextStyle(
+                        fontSize: 150,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    );
+                  },
+                ),
               ),
-              onTap: () {
-                if (dynamicLink.toString().isNotEmpty)
-                  share(context, dynamicLink);
-                else
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: Text('Error'),
-                      content: Text('Please generate a link first'),
-                      actions: <Widget>[
-                        FlatButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Text('Ok'),
-                        ),
-                      ],
-                    ),
-                  );
-              },
             ),
-            FlatButton(
-              onPressed: () async {
-                var link = await createDynamicLink(id: user.uid);
-                setState(() {
-                  dynamicLink = link;
-                });
-                print(link);
-              },
-              child: Card(
-                child: Text('Generate Link!'),
-              ),
+            Container(
+              margin: EdgeInsets.all(20),
+              child: !hasLink
+                  ? RaisedButton(
+                      child: Text('Generate Link', style: textStyle),
+                      onPressed: () async {
+                        var link = await createDynamicLink(id: user.uid);
+                        setState(() {
+                          dynamicLink = link;
+                        });
+                        print(link);
+                      },
+                    )
+                  : RaisedButton(
+                      child: Text('Share', style: textStyle),
+                      onPressed: () => share(context, dynamicLink)),
             ),
           ],
         ),

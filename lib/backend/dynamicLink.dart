@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 
-void fetchLinkData(User user) async {
+void fetchLinkData(User user, Function onError) async {
   // FirebaseDynamicLinks.getInitialLInk does a call to firebase to get us the real link because we have shortened it.
   var link = await FirebaseDynamicLinks.instance.getInitialLink();
 
@@ -13,7 +13,11 @@ void fetchLinkData(User user) async {
   // This will handle incoming links if the application is already opened
   FirebaseDynamicLinks.instance.onLink(
       onSuccess: (PendingDynamicLinkData dynamicLink) async {
-    handleLinkData(dynamicLink, user);
+        try {
+          handleLinkData(dynamicLink, user);
+        } catch (error) {
+          onError(error);
+        }
   });
 }
 
@@ -28,11 +32,13 @@ void handleLinkData(PendingDynamicLinkData data, User user) {
 
       if (user.uid == id) {
         print('Cannot refer yourself');
+        throw 'Cannot refer yourself';
       } else {
         checkReferralStatus(user.uid).then(
           (value) {
             if (value) {
               print('You have already used a referral link');
+              throw 'You have already used a referral link';
             }
             
             else {
