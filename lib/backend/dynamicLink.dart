@@ -8,20 +8,25 @@ void fetchLinkData(User user, Function onError) async {
   var link = await FirebaseDynamicLinks.instance.getInitialLink();
 
   // This link may exist if the app was opened fresh so we'll want to handle it the same way onLink will.
-  handleLinkData(link, user);
+  try {
+    handleLinkData(link, user, onError);
+  } catch (error) {
+    onError(error);
+    return;
+  }
 
   // This will handle incoming links if the application is already opened
   FirebaseDynamicLinks.instance.onLink(
       onSuccess: (PendingDynamicLinkData dynamicLink) async {
-        try {
-          handleLinkData(dynamicLink, user);
-        } catch (error) {
-          onError(error);
-        }
+    try {
+      handleLinkData(dynamicLink, user, onError);
+    } catch (error) {
+      onError(error);
+    }
   });
 }
 
-void handleLinkData(PendingDynamicLinkData data, User user) {
+void handleLinkData(PendingDynamicLinkData data, User user, Function onError) {
   final Uri uri = data?.link;
   if (uri != null) {
     final queryParams = uri.queryParameters;
@@ -38,12 +43,9 @@ void handleLinkData(PendingDynamicLinkData data, User user) {
           (value) {
             if (value) {
               print('You have already used a referral link');
-              throw 'You have already used a referral link';
-            }
-            
-            else {
-              updateReferral(id, user.uid);
-              hasUsedReferral(user.uid);
+              onError('You have already used a referral link');
+            } else {
+              updateReferral(id, user.uid, onError);
             }
           },
         );

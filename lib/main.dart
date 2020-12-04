@@ -3,11 +3,6 @@ import 'package:flutter/material.dart';
 
 import './backend/signIn.dart';
 import 'backend/signIn.dart';
-import 'backend/signIn.dart';
-import 'backend/signIn.dart';
-import 'backend/signIn.dart';
-import 'backend/signIn.dart';
-import 'backend/signIn.dart';
 import 'screens/referral_app.dart';
 
 // Import the firebase_core plugin
